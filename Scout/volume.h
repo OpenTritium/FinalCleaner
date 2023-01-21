@@ -1,5 +1,5 @@
 #pragma once
-/// @brief 卷接口
+/// @brief 卷基类
 class Volume
 {
 private:
@@ -8,11 +8,13 @@ private:
 	std::wstring rootPath;
 	std::wstring FileSystem;
 	size_t DriveType;
+	HANDLE GainVolumeHandle();
 public:
-	virtual HANDLE GetVolumeHandle() = 0;
-	virtual wchar_t GetDriveLetter() = 0;
-	virtual std::wstring GetRootPath() = 0;
-	virtual std::wstring GetFileSystem() = 0;
+	HANDLE GetVolumeHandle();
+	wchar_t GetDriveLetter();
+	std::wstring GetRootPath();
+	std::wstring GetFileSystem();
+	virtual bool GenerateDiskIndex() = 0;  // 其他文件系统交给它自己实现
 	virtual void RefreshDiskIndex() = 0;  // 记得设计卷实例容器更新器
 	virtual ~Volume() {};
 };
