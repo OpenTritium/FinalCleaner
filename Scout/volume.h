@@ -1,20 +1,20 @@
-#pragma once
-/// @brief ¾í»ùÀà
+ï»¿#pragma once
+/// @brief å·åŸºç±»
 class Volume
 {
-private:
-	HANDLE VolumeHandle;
-	wchar_t diveLetter;
+protected:
+	HANDLE volumeHandle = INVALID_HANDLE_VALUE;
+	wchar_t driveLetter;
 	std::wstring rootPath;
-	std::wstring FileSystem;
-	size_t DriveType;
-	HANDLE GainVolumeHandle();
+	std::wstring fileSystem;
+	size_t driveType;
+	void GainVolumeHandle(void);
 public:
-	HANDLE GetVolumeHandle();
-	wchar_t GetDriveLetter();
-	std::wstring GetRootPath();
-	std::wstring GetFileSystem();
-	virtual bool GenerateDiskIndex() = 0;  // ÆäËûÎÄ¼şÏµÍ³½»¸øËü×Ô¼ºÊµÏÖ
-	virtual void RefreshDiskIndex() = 0;  // ¼ÇµÃÉè¼Æ¾íÊµÀıÈİÆ÷¸üĞÂÆ÷
-	virtual ~Volume() {};
+	const HANDLE GetVolumeHandle(void) const;
+	const wchar_t& GetDriveLetter(void) const;
+	std::wstring_view GetRootPath(void) const;
+	std::wstring_view GetFileSystem(void) const;
+	virtual bool GenerateDiskIndex(void) = 0;  // å…¶ä»–æ–‡ä»¶ç³»ç»Ÿäº¤ç»™å®ƒè‡ªå·±å®ç°
+	virtual void RefreshDiskIndex(void) = 0;  // è®°å¾—è®¾è®¡å·å®ä¾‹å®¹å™¨æ›´æ–°å™¨
+	virtual ~Volume(void) {};
 };

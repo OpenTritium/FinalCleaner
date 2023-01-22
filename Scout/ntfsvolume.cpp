@@ -3,17 +3,15 @@
 
 class NTFSVolume: public Volume{
 public:
-	HANDLE GetVolumeHandle() override {
-
-	};
-	wchar_t GetDriveLetter() override {
-	
-	};
-	std::wstring GetRootPath() override {
-
-	};
-	std::wstring GetFileSystem() override {
-
-	};
-	
+	bool GenerateDiskIndex(void) override;
+	void RefreshDiskIndex(void) override;
 };
+
+bool NTFSVolume::GenerateDiskIndex(void)
+{
+	return false;
+}
+
+void NTFSVolume::RefreshDiskIndex(void)
+{
+}
