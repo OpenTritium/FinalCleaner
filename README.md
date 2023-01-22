@@ -1,5 +1,5 @@
 # FinalCleaner
-FinalCleaner 的定位是轻巧美观，快捷方便并具有极客色彩的 Windows 垃圾清理软件。
+FinalCleaner 的定位是轻巧快速，简单优雅并具有极客色彩的 Windows 垃圾清理软件。
 
 ## 开发技术
 
