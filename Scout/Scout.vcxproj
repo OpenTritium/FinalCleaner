@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="exception.h" />
     <ClInclude Include="volume.h" />
+    <ClInclude Include="volumemanager.h" />
     <ClInclude Include="winapi.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -157,6 +158,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="volume.cpp" />
+    <ClCompile Include="volumemanager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
