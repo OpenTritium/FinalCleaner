@@ -2,5 +2,8 @@
 #ifndef PCH_H
 #define PCH_H
 #include <string>
+#include <vector>
+#include <memory>
 #include "winapi.h"
 #endif
+typedef unsigned short ushort;

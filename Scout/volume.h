@@ -18,3 +18,21 @@ public:
 	virtual void RefreshDiskIndex(void) = 0; // 记得设计卷实例容器更新器
 	virtual ~Volume(void) noexcept {};
 };
+
+class NTFSVolume : public Volume {
+public:
+	bool GenerateDiskIndex(void) override;
+	void RefreshDiskIndex(void) override;
+	NTFSVolume(wchar_t& driveLetter);
+};
+
+bool NTFSVolume::GenerateDiskIndex(void) {
+	return false;
+}
+
+void NTFSVolume::RefreshDiskIndex(void) {
+}
+
+NTFSVolume::NTFSVolume(wchar_t& driveLetter) {
+	this->driveLetter = driveLetter;
+}

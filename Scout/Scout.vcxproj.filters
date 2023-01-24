@@ -27,18 +27,12 @@
     <ClInclude Include="exception.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="volumemanager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ntfsvolume.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="volume.cpp">

@@ -144,12 +144,10 @@
   <ItemGroup>
     <ClInclude Include="exception.h" />
     <ClInclude Include="volume.h" />
-    <ClInclude Include="volumemanager.h" />
     <ClInclude Include="winapi.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ntfsvolume.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
