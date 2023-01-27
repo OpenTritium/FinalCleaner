@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "WinUI3 (Package)": {
+    "Lens (Package)": {
       "commandName": "MsixPackage"
     },
-    "WinUI3 (Unpackaged)": {
+    "Lens (Unpackaged)": {
       "commandName": "Project"
     }
   }

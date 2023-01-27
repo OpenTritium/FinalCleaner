@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Debug folder
-WinUI3/obj
-WinUI3/bin
+Lens/obj
+Lens/bin
