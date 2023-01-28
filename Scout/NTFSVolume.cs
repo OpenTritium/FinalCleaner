@@ -1,6 +1,6 @@
 ﻿namespace Scout
 {
-    internal class NTFSVolume : Volume, IDatabase
+    internal class NTFSVolume : Volume, IRecorder
     {
         public NTFSVolume(DriveInfo driveInfo) : base(driveInfo)
         {

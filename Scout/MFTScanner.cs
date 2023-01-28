@@ -1,7 +1,6 @@
-﻿using static PInvoke.Kernel32;
-namespace Scout
+﻿namespace Scout
 {
-    internal class MFTScanner : IDatabase
+    internal class MFTScanner : IRecord
     {
         public bool GenerateVolumeIndex()
         {

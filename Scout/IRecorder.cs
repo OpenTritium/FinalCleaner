@@ -1,6 +1,6 @@
 ﻿namespace Scout
 {
-    internal interface IDatabase
+    internal interface IRecorder
     {
         bool GenerateVolumeIndex();
     }
