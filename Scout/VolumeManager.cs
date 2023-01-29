@@ -33,23 +33,20 @@
                 string driveFormat = driveInfo.DriveFormat;
                 // 按优先级分支
                 if (driveFormat.CompareTo("NTFS") == 0)
-                {
                     _formatSeq[i] = FileSystem.NTFS;
-                }
                 else if (driveFormat.CompareTo("exFAT") == 0)
-                {
                     _formatSeq[i] = FileSystem.exFAT;
-                }
                 else
-                {
                     _formatSeq[i] = FileSystem.Others;
-                }
                 // 实例化卷对象
                 Volume volume = new(driveInfo);
                 VolumeList.Add(volume);
             }
         }
 
+        /// <summary>
+        /// Refresh volume management static class.
+        /// </summary>
         public static void Refresh()
         {
             VolumeList.Clear();
@@ -68,9 +65,7 @@
             for (byte i = 0; i < VolumeCount; ++i)
             {
                 if (_formatSeq[i] == driveFormat)
-                {
-                    volumeList.Add(VolumeList[i]);
-                }
+                volumeList.Add(VolumeList[i]);
             }
             return volumeList;
         }
@@ -84,12 +79,7 @@
         {
             List<Volume> volumeList = new();
             foreach (Volume volume in VolumeList)
-            {
-                if (volume.DriveType == driveType)
-                {
-                    volumeList.Add(volume);
-                }
-            }
+                if (volume.DriveType == driveType) volumeList.Add(volume);
             return volumeList;
         }
     }

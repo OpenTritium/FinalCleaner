@@ -2,6 +2,5 @@
 {
     internal interface IRecorder
     {
-        bool GenerateVolumeIndex();
     }
 }

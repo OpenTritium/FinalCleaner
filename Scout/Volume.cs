@@ -2,7 +2,7 @@
 {
     internal class Volume : IVolume
     {
-        private readonly DriveInfo _driveInfo;
+        protected readonly DriveInfo _driveInfo;
         public string VolumeLabel { get => _driveInfo.VolumeLabel; }
         public string FileSystem { get => _driveInfo.DriveFormat; }
         public long FreeBytes { get => _driveInfo.TotalFreeSpace; }
