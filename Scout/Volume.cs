@@ -11,9 +11,6 @@
         public DirectoryInfo RootPath { get => _driveInfo.RootDirectory; }
         public DriveType DriveType { get => _driveInfo.DriveType; }
 
-        public Volume(DriveInfo driveInfo)
-        {
-            _driveInfo = driveInfo;
-        }
+        public Volume(DriveInfo driveInfo) => _driveInfo = driveInfo;
     }
 }

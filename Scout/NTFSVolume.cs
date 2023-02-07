@@ -119,44 +119,49 @@ namespace Scout
 
         internal bool CheckVolumeValidity() => _volumeHandle.IsInvalid;
 
+        private static IntPtr Stru2Ptr<T>(T stru)
+        {
+            ArgumentNullException.ThrowIfNull(stru);
+            int size = Marshal.SizeOf(stru);
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(stru, ptr, true);
+            return ptr;
+        }
+
         internal bool CreateUSNJournal()
         {
-            CreateUsnJournalData CUJD = new();  // 初始化为 0
+            CreateUsnJournalData cujd = new();  // 初始化为 0
+            var pCujd = Stru2Ptr<CreateUsnJournalData>(cujd);
             bool isCreated;
-            unsafe
-            {
-                isCreated = DeviceIoControl(
-                    _volumeHandle,
-                    (int)IoControlCode.FSCTL_CREATE_USN_JOURNAL,
-                    &CUJD,
-                    sizeof(CreateUsnJournalData),
-                    null,
-                    0,
-                    out _,  // lpOverlapped 为空指针时 pBytesreturned 不能为空
-                    (OVERLAPPED*)null);
-            }
+            isCreated = DeviceIoControl(
+                _volumeHandle,
+                (int)IoControlCode.FSCTL_CREATE_USN_JOURNAL,
+                pCujd,
+                Marshal.SizeOf<CreateUsnJournalData>(cujd),
+                IntPtr.Zero,
+                0,
+                out _,  // lpOverlapped 为空指针时 pBytesreturned 不能为空
+                IntPtr.Zero);
             return isCreated;
         }
 
         private bool QueryUSNJournal()
         {
-            var UJD = default(UsnJournalData);
+            var ujd = default(UsnJournalData);
+            var pUjd = Stru2Ptr<UsnJournalData>(ujd);
             bool isCreated;
-            unsafe
-            {
-                isCreated = DeviceIoControl(
-                        _volumeHandle,
-                        (int)IoControlCode.FSCTL_QUERY_USN_JOURNAL,
-                        null,
-                        0,
-                        &UJD,
-                        sizeof(UsnJournalData),
-                        out _,  // lpOverlapped 为空指针时 pBytesreturned 不能为空
-                        (OVERLAPPED*)null);
-            }
+            isCreated = DeviceIoControl(
+                    _volumeHandle,
+                    (int)IoControlCode.FSCTL_QUERY_USN_JOURNAL,
+                    IntPtr.Zero,
+                    0,
+                    pUjd,
+                    Marshal.SizeOf<UsnJournalData>(ujd),
+                    out _,  // lpOverlapped 为空指针时 pBytesreturned 不能为空
+                    IntPtr.Zero);
             if (isCreated)
             {
-                _USNJournalData = UJD;
+                _USNJournalData = ujd;
                 return true;
             }
             return false;
@@ -192,27 +197,32 @@ namespace Scout
                     IntPtr.Zero))
             {
                 /* 为访问下条 USN 记录做准备 */
-                var RetBytes = Convert.ToUInt32(USNDataSize);  
+                var RetBytes = Convert.ToUInt32(USNDataSize);
                 // 奶奶滴微软的文档什么时候能统一一下，有的写的是 uint 有的写的是 int
-                unsafe
+                RetBytes -= sizeof(ulong);  // USN 数据空间减去一条记录的长度
+                IntPtr pUsnRecord = new(pBuffer.ToInt64());
+                while (RetBytes > 0)
                 {
-                    RetBytes -= sizeof(ulong);  // USN 数据空间减去一条记录的长度
-                    IntPtr pUsnRecord = new IntPtr(pBuffer.ToInt64());
-                    while (RetBytes > 0)
-                    {
-                        var usnRecord = Marshal.PtrToStructure<UsnRecord>(pUsnRecord);
-                        Node.fileName = usnRecord.FileName.ToString();
-                        Node.parentRef = usnRecord.ParentFileReferenceNumber;
-                        Node.timeStamp = usnRecord.TimeStamp;
-                        FileInfoMap[usnRecord.FileReferenceNumber] = Node;
-                        var recordLen = usnRecord.RecordLength;
-                        RetBytes -= recordLen;
-                        pUsnRecord = IntPtr.Subtract(pUsnRecord, (int)recordLen);  // 读下条 USN 日志
-                    }
-                    mft.StartFileReferenceNumber = (ulong)Marshal.ReadInt64(pBuffer, 0);
-                    // 每次调用 FSCTL_ENUM_USN_DATA 检索后续调用的起点作为输出缓冲区中的第一个条目
+                    var usnRecord = Marshal.PtrToStructure<UsnRecord>(pUsnRecord);
+                    Node.fileName = usnRecord.FileName.ToString();
+                    Node.parentRef = usnRecord.ParentFileReferenceNumber;
+                    Node.timeStamp = usnRecord.TimeStamp;
+                    FileInfoMap[usnRecord.FileReferenceNumber] = Node;
+                    var recordLen = usnRecord.RecordLength;
+                    RetBytes -= recordLen;
+                    pUsnRecord = IntPtr.Subtract(pUsnRecord, (int)recordLen);  // 读下条 USN 日志
                 }
+                mft.StartFileReferenceNumber = (ulong)Marshal.ReadInt64(pBuffer, 0);
+                // 每次调用 FSCTL_ENUM_USN_DATA 检索后续调用的起点作为输出缓冲区中的第一个条目
             }
+
+            #region 释放非托管内存
+
+            Marshal.FreeHGlobal(pMft);
+            Marshal.FreeHGlobal(pBuffer);
+
+            #endregion 释放非托管内存
+
             return true;
         }
 

@@ -1,63 +1,62 @@
 ﻿namespace Scout
 {
+    /// <summary>
+    /// 卷管理类需要常驻内存，负责向前台界面发送视图数据
+    /// </summary>
     public static class VolumeManager
     {
-        public static int VolumeCount { get; private set; }
-        internal static List<Volume> VolumeList { get; private set; }
-        private static FileSystem[] _formatSeq;
+        private static uint _volumeCount = (uint)DriveInfo.GetDrives().Length;
+        private static readonly List<Volume> _volumeList = new();
+        internal static uint VolumeCount { get => _volumeCount; }
+        private static FileSystem[] _formatSeq = new FileSystem[_volumeCount];
 
-        public enum FileSystem : sbyte
+        public enum FileSystem : byte
         {
-            Others = -1, exFAT = 0, NTFS,
+            Others, exFAT, NTFS,
         }
-
-        static VolumeManager()
-        {
-            VolumeList = new();
-            VolumeCount = default;
-            _formatSeq = new FileSystem[GetVolumeCount()];
-        }
-
-        private static int GetVolumeCount() => VolumeCount = DriveInfo.GetDrives().Length;
 
         /// <summary>
-        /// Initialize the volume management static class.
+        /// 实例化卷对象，并且添加到列表里
         /// </summary>
         public static void Init()
         {
             DriveInfo[] driveInfos = DriveInfo.GetDrives();
-            _formatSeq = new FileSystem[GetVolumeCount()];
+            _formatSeq = new FileSystem[_volumeCount];
             for (byte i = 0; i <= VolumeCount; ++i)
             {
                 var driveInfo = driveInfos[i];
                 string driveFormat = driveInfo.DriveFormat;
-                // 按优先级分支
+
+                #region 使用 NTFS 文件系统的情况会多得多
+
                 if (driveFormat.CompareTo("NTFS") == 0)
                     _formatSeq[i] = FileSystem.NTFS;
                 else if (driveFormat.CompareTo("exFAT") == 0)
                     _formatSeq[i] = FileSystem.exFAT;
                 else
                     _formatSeq[i] = FileSystem.Others;
-                // 实例化卷对象
+
+                #endregion NTFS 文件系统的情况会多得多
+
                 Volume volume = new(driveInfo);
-                VolumeList.Add(volume);
+                _volumeList.Add(volume);
             }
         }
 
         /// <summary>
-        /// Refresh volume management static class.
+        /// 通过清除列表和计数器再初始化一遍卷对象来刷新卷管理类数据
         /// </summary>
         public static void Refresh()
         {
-            VolumeList.Clear();
-            VolumeCount = default;
+            _volumeList.Clear();
+            _volumeCount = default;
             Init();
         }
 
         /// <summary>
-        /// Return available volume objects by file system.
+        /// 根据文件系统来返回卷对象列表
         /// </summary>
-        /// <param name="format"></param>
+        /// <param name="format">Others 0, exFAT 1, NTFS 2</param>
         /// <returns></returns>
         internal static List<Volume> GetVolumes(FileSystem driveFormat)
         {
@@ -65,20 +64,22 @@
             for (byte i = 0; i < VolumeCount; ++i)
             {
                 if (_formatSeq[i] == driveFormat)
-                volumeList.Add(VolumeList[i]);
+                {
+                    volumeList.Add(_volumeList[i]);
+                }
             }
             return volumeList;
         }
 
         /// <summary>
-        /// Returns the available volume objects by drive type.
+        /// 根据驱动器类型返回卷对象列表
         /// </summary>
-        /// <param name="driveType"></param>
+        /// <param name="driveType">Unknown 0,NoRootDirectory 1,Removable 2,Fixed 3,Network 4,CDRom 5,Ram 6</param>
         /// <returns></returns>
         private static List<Volume> GetVolumes(DriveType driveType)
         {
             List<Volume> volumeList = new();
-            foreach (Volume volume in VolumeList)
+            foreach (Volume volume in _volumeList)
                 if (volume.DriveType == driveType) volumeList.Add(volume);
             return volumeList;
         }
