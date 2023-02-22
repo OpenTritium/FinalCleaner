@@ -8,7 +8,7 @@
         private static uint _volumeCount = (uint)DriveInfo.GetDrives().Length;
         private static readonly List<Volume> _volumeList = new();
         internal static uint VolumeCount { get => _volumeCount; }
-        private static FileSystem[] _formatSeq = new FileSystem[_volumeCount];
+        private static FileSystem[] _formatMask = new FileSystem[_volumeCount];
 
         public enum FileSystem : byte
         {
@@ -21,8 +21,8 @@
         public static void Init()
         {
             DriveInfo[] driveInfos = DriveInfo.GetDrives();
-            _formatSeq = new FileSystem[_volumeCount];
-            for (byte i = 0; i <= VolumeCount; ++i)
+            _formatMask = new FileSystem[_volumeCount];
+            for (byte i = 0; i < VolumeCount; ++i)
             {
                 var driveInfo = driveInfos[i];
                 string driveFormat = driveInfo.DriveFormat;
@@ -30,11 +30,11 @@
                 #region 使用 NTFS 文件系统的情况会多得多
 
                 if (driveFormat.CompareTo("NTFS") == 0)
-                    _formatSeq[i] = FileSystem.NTFS;
+                    _formatMask[i] = FileSystem.NTFS;
                 else if (driveFormat.CompareTo("exFAT") == 0)
-                    _formatSeq[i] = FileSystem.exFAT;
+                    _formatMask[i] = FileSystem.exFAT;
                 else
-                    _formatSeq[i] = FileSystem.Others;
+                    _formatMask[i] = FileSystem.Others;
 
                 #endregion NTFS 文件系统的情况会多得多
 
@@ -63,7 +63,7 @@
             List<Volume> volumeList = new();
             for (byte i = 0; i < VolumeCount; ++i)
             {
-                if (_formatSeq[i] == driveFormat)
+                if (_formatMask[i] == driveFormat)
                 {
                     volumeList.Add(_volumeList[i]);
                 }
